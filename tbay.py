@@ -14,30 +14,33 @@ Base = declarative_base() # this is a repository for the models and will issue '
 
 from datetime import datetime
 from decimal import *
-from sqlalchemy import Column, Integer, String, DateTime, Float
+from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey
+# remember to import relationship model and ForeignKey
+from sqlalchemy.orm import relationship
 
 
 # create the model table 'items' in SQLAlchemy
 class Item(Base): # subclass of Base ie 'declarative_base'
     __tablename__ = "items" # used to name the items table in the database
 
-    # four columns in the table
-    
+    # columns describing the items
     id = Column(Integer, primary_key=True) # an integer primary key used to uniquely id each item
     name = Column(String, nullable=False) # the name of each item, has 'not null' constraint applied
     description = Column(String) # a column for the description of each item
     start_time = Column(DateTime, default=datetime.utcnow) # the auction start time using the DateTime object
-
+    # column describing the relationship to users [one(user)-to-many(items)]
+    owner = Column(Integer, ForeignKey('users.id'), nullable=False)
 
 # create the model table 'user' in SQLAlchemy
 class User(Base):
     __tablename__ = "users"
 
     # three columns in the user table
-    
     id = Column(Integer, primary_key=True) # the id of the user and the primary key
     username = Column(String, nullable=False) # the username is a string which can't be null
     password = Column(String, nullable=False) # password for the user, also a string which can't be null
+    # add relationship details so that users can auction many items [one(users)-to-many(items)]
+    items_selling = relationship("Item", backref="items")
 
 
 # create the model table 'bids' in SQLAlchemy
@@ -45,12 +48,17 @@ class Bid(Base):
     __tablename__ = "bids"
 
     # two columns in the bids table
-
     id = Column(Integer, primary_key=True) # the id of the bid is the primary key
     price = Column(Float(scale=2), nullable=False) # floating point price which can not be null
+    
 
+# STEP 3: create the many-to-many relationship between users and items they're selling
+# users_items = Table('users_items', Base.metadata,
+#     Column('user_id', Integer, ForeignKey('user.id')),
+#     Column('item_id', Integer, ForeignKey('item.id'))
+# )
 
-
+    
 # WORKING WITH MODELS 
 # some example code to use with working with database
 # This could also be written as: michael = User(username="michaelreid", password="password")    
