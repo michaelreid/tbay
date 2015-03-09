@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-engine = create_engine('postgresql://localhost/tbay') # SQLAlchemy way of talking to database - using raw SQL
+engine = create_engine('postgresql://action:action@localhost:5432/tbay') # SQLAlchemy way of talking to database - using raw SQL
 Session = sessionmaker(bind=engine) # equivalent to psycopg2 cursor. Cue and execute database transactions
 session = Session() # NB: can have multiple sessions at a time
 Base = declarative_base() # this is a repository for the models and will issue 'create table' statements
@@ -13,7 +13,7 @@ Base = declarative_base() # this is a repository for the models and will issue '
 # STEP 2: import modules that help create the tables in the database
 
 from datetime import datetime
-from decimal import *
+from decimal import * 
 from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey
 # remember to import relationship model and ForeignKey
 from sqlalchemy.orm import relationship
